@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  node:
+    build:
+      context: .
+      dockerfile:  _docker/node/Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    container_name: front_node
+
