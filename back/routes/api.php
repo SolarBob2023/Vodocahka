@@ -14,6 +14,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+
+Route::group(['prefix'=> 'user', 'middleware' => 'auth:sanctum'], function (){
+    Route::get('/logout', [\App\Http\Controllers\UserController::class, 'logout']);
+
 });
+
+Route::group(['prefix'=> 'user'], function (){
+    Route::post('/', [\App\Http\Controllers\UserController::class, 'store']);
+    Route::post('/login', [\App\Http\Controllers\UserController::class, 'login']);
+});
+
+Route::get('/sanctum/csrf-cookie', [\Laravel\Sanctum\Http\Controllers\CsrfCookieController::class, 'show']);

@@ -21,6 +21,8 @@ services:
     depends_on:
       - db
     restart: always
+    volumes:
+      - ./pgadmin/:/var/lib/pgadmin/
     environment:
       PGADMIN_DEFAULT_PASSWORD: 12345678
       PGADMIN_DEFAULT_EMAIL: root@root.com
