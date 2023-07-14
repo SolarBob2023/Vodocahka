@@ -12,4 +12,8 @@ class Bill extends Model
     protected $guarded = false;
     public $timestamps = false;
 
+    public function resident()
+    {
+        return $this->belongsTo(Resident::class, 'resident_id','id');
+    }
 }

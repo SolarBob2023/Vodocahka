@@ -40,9 +40,12 @@ class DatabaseSeeder extends Seeder
                 'end_date' => $tempDt->toDateTimeString(),
             ];
             $period = Period::create($data);
-            $period->record()->create([
-                'amount_volume' => 100 + rand(0,1000)*0.1,
-            ]);
+            if ( $i != $diffMonths - 1){
+                $period->record()->create([
+                    'amount_volume' => 100 + rand(0,1000)*0.1,
+                ]);
+            }
+
             $period->rate()->create([
                 'amount_price' => 140 + rand(0,20)-10,
             ]);
@@ -76,9 +79,11 @@ class DatabaseSeeder extends Seeder
             ->orderBy('periods.id')
             ->pluck('area');
         $periods = Period::all();
+        $periods->pop();
         foreach ($periods as $period){
             $periodId = $period->id;
             $residents = Resident::where('start_date','<=',$period->end_date)->get();
+            //TODO исправить, чтобы при повторном вызове seeder бд не заполнялась
             foreach ($residents as $resident){
                 $period->bills()->updateOrCreate([
                     'resident_id' => $resident->id,

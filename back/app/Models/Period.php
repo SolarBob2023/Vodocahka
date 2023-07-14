@@ -25,4 +25,9 @@ class Period extends Model
     {
         return $this->hasMany(Bill::class,'period_id','id');
     }
+
+    public function residents()
+    {
+        return $this->belongsToMany(Resident::class,'bills','period_id','resident_id');
+    }
 }

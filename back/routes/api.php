@@ -28,6 +28,17 @@ Route::group(['prefix'=> 'user'], function (){
 Route::group(['prefix'=> 'admin'], function (){
     Route::post('/rates', [\App\Http\Controllers\RateController::class, 'store']);
     Route::get('/rates', [\App\Http\Controllers\RateController::class, 'index']);
+    Route::post('/records', [\App\Http\Controllers\RecordController::class, 'store']);
+    Route::get('/records', [\App\Http\Controllers\RecordController::class, 'index']);
+
+    Route::get('/bills/{period}', [\App\Http\Controllers\BillController::class, 'index']);
+
+    Route::group(['prefix' => 'residents'], function (){
+        Route::get('/', [\App\Http\Controllers\ResidentController::class, 'index']);
+        Route::post('/', [\App\Http\Controllers\ResidentController::class, 'store']);
+        Route::patch('/{resident}', [\App\Http\Controllers\ResidentController::class, 'update']);
+    });
 });
+
 
 Route::get('/sanctum/csrf-cookie', [\Laravel\Sanctum\Http\Controllers\CsrfCookieController::class, 'show']);
