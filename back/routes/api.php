@@ -25,4 +25,9 @@ Route::group(['prefix'=> 'user'], function (){
     Route::post('/login', [\App\Http\Controllers\UserController::class, 'login']);
 });
 
+Route::group(['prefix'=> 'admin'], function (){
+    Route::post('/rates', [\App\Http\Controllers\RateController::class, 'store']);
+    Route::get('/rates', [\App\Http\Controllers\RateController::class, 'index']);
+});
+
 Route::get('/sanctum/csrf-cookie', [\Laravel\Sanctum\Http\Controllers\CsrfCookieController::class, 'show']);
