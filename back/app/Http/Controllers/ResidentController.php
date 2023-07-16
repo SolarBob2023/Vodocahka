@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ResidentResource;
 use App\Models\Bill;
+use App\Models\Period;
 use App\Models\Resident;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -17,34 +18,49 @@ class ResidentController extends Controller
             'area' => 'required|numeric',
             'start_date' => 'required|date',
         ]);
+
+        //Проверка что указанного дачника нет в базе данных
+        $resident = Resident::where('fio','=', $data['fio'])
+            ->where('area', $data['area'])->first();
+        if ($resident){
+            return response()
+                ->json([
+                    'errors' => ['message' => ['Дачник с таким участком уже подключен']]
+                ], 422);
+
+        }
         //вычисление периода
         $currentDt = Carbon::create(Carbon::now()->year, Carbon::now()->month);
         $startDt = Carbon::create($data['start_date']);
         $reqDt = Carbon::create($startDt->year, $startDt->month);
-        $period = Carbon::create(2022)->diffInMonths($reqDt);
+        $periodId = Carbon::create(2022)->diffInMonths($reqDt) + 1;
         $diffMonths = $currentDt->diffInMonths($reqDt, false);
         if ($diffMonths >=0){
-            return "будущий период";
+            //TODO проверка что перид есть, и пользователь не подключен
+            //Проверка на наличие предудщих периодов в бд
+            $lastPeriod = Period::max('id');
+            if ($lastPeriod - $periodId < 0){
+                $lastDtBegin = Carbon::create(2022)->addMonths($lastPeriod);
+                for ($i = 0; $i < abs($lastPeriod - $periodId); $i++){
+                    Period::updateOrCreate([
+                        'begin_date' => $lastDtBegin,
+                        'end_date' => $lastDtBegin->copy()->addMonth()->subDay()
+                    ]);
+                    $lastDtBegin->addMonth();
+                }
+            }
+            $resident = Resident::create($data);
+            return ResidentResource::make($resident);
         } elseif ($diffMonths == -1) {
             $maxBillPeriod = Bill::max('period_id');
-            if ($maxBillPeriod > $period) {
+            if ($maxBillPeriod >= $periodId) {
                 return response()
                     ->json([
                         'errors' => ['period' => ['Нельзя добавить дачника в период, по которому уже выставлены счета']]
                     ], 422);
             }
-            $resident = Resident::where('fio','=', $data['fio'])
-                ->where('area', $data['area'])->first();
-            if ($resident){
-                return response()
-                    ->json([
-                        'errors' => ['message' => ['Дачник с таким участком уже подключен']]
-                    ], 422);
-
-            } else {
-                $resident = Resident::create($data);
-                return ResidentResource::make($resident);
-            }
+            $resident = Resident::create($data);
+            return ResidentResource::make($resident);
         } else {
             return response()
                 ->json([

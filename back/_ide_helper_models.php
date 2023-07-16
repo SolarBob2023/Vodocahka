@@ -18,6 +18,7 @@ namespace App\Models{
  * @property int $resident_id
  * @property int $period_id
  * @property float $amount_rub
+ * @property-read \App\Models\Resident $resident
  * @method static \Illuminate\Database\Eloquent\Builder|Bill newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Bill newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Bill query()
@@ -40,6 +41,8 @@ namespace App\Models{
  * @property-read int|null $bills_count
  * @property-read \App\Models\Rate|null $rate
  * @property-read \App\Models\Record|null $record
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Resident> $residents
+ * @property-read int|null $residents_count
  * @method static \Illuminate\Database\Eloquent\Builder|Period newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Period newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Period query()

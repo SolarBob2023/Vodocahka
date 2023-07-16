@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\RateCollection;
 use App\Http\Resources\RateResource;
 use App\Models\Period;
 use App\Models\Rate;
@@ -23,7 +22,7 @@ class RateController extends Controller
         $diffMonths = $currentDt->diffInMonths($reqDt, false);
         if ($diffMonths > 0){
             //TODO транзакция в бд
-            //Проверка наличие предудщих периодов в бд
+            //Проверка на наличие предудщих периодов в бд
             $lastPeriod = Period::max('id');
             if ($lastPeriod - $data['period'] < 0){
                 $lastDtBegin = Carbon::create(2022)->addMonths($lastPeriod);

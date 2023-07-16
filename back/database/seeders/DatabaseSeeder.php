@@ -73,7 +73,7 @@ class DatabaseSeeder extends Seeder
             ->orderBy('periods.id')
             ->pluck('price');
         $periodAreas = DB::table('residents')
-            ->join('periods', 'residents.start_date','<=','periods.end_date')
+            ->rightJoin('periods', 'residents.start_date','<=','periods.end_date')
             ->select('periods.id', DB::raw('sum(area) as area'))
             ->groupBy('periods.id')
             ->orderBy('periods.id')
@@ -83,7 +83,6 @@ class DatabaseSeeder extends Seeder
         foreach ($periods as $period){
             $periodId = $period->id;
             $residents = Resident::where('start_date','<=',$period->end_date)->get();
-            //TODO исправить, чтобы при повторном вызове seeder бд не заполнялась
             foreach ($residents as $resident){
                 $period->bills()->updateOrCreate([
                     'resident_id' => $resident->id,
