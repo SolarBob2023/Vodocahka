@@ -16,7 +16,7 @@ export default defineComponent({
   data() {
     return {
       month: {
-        month: new Date().getMonth(),
+        month: new Date().getMonth() - 1,
         year: new Date().getFullYear()
       },
       bills: {

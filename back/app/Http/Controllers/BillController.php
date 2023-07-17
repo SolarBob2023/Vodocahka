@@ -14,7 +14,7 @@ class BillController extends Controller
 {
     public function index(Period $period) : \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        $bills = $period->bills()->with('resident')->paginate(10);
+        $bills = $period->bills()->with('resident')->orderBy('amount_rub', 'DESC')->paginate(10);
         return BillResource::collection($bills);
     }
 }

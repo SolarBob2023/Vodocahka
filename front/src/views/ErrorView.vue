@@ -21,6 +21,7 @@ export default defineComponent({
   },
   mounted() {
     const error = this.errorStore.getError;
+    console.log(error);
     if (error)  {
       if (error.response && error.response.data) {
         //Не авторизован

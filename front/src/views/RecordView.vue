@@ -1,6 +1,5 @@
 <script>
 import {defineComponent} from 'vue'
-import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import {differenceInMonths} from 'date-fns'
 import api from "@/api";
@@ -9,58 +8,43 @@ import {mapActions} from "pinia";
 import {useErrorStore} from "@/stores/Error";
 
 export default defineComponent({
-  name: 'RateView',
+  name: 'RecordView',
 
-  components: {VueDatePicker},
   data() {
     return {
-      month: {
-        month: new Date().getMonth() + 1,
-        year: new Date().getFullYear()
-      },
       rates: {
         data: null,
         links: null,
       },
       errors : {
-        price: null,
+        volume: null,
         period: null,
       },
-      price: null,
+      volume: null,
       addingRate: false,
     };
   },
 
 
   computed: {
-    minPeriod(){
-      const beginDate = new Date(2022, 1, 1);
-      const selectedDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-      return differenceInMonths(selectedDate, beginDate) + 2
-    },
-
     period() {
       const beginDate = new Date(2022, 1, 1);
-      const selectedDate = new Date(this.month.year, this.month.month, 1);
+      const selectedDate = new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1);
       return differenceInMonths(selectedDate, beginDate) + 2
-    },
-
-    isValidPeriod(){
-      return this.period > this.minPeriod
     },
 
   },
   mounted() {
-    this.getRates()
+    this.getRecords()
   },
   methods: {
     ...mapActions(useErrorStore,{ storeError: 'storeError' }),
     changeAddingRate(){
       this.addingRate = !this.addingRate;
     },
-    async getRates(page = 1) {
+    async getRecords(page = 1) {
       try {
-        const response = await api.get(`/api/admin/rates?page=${page}`)
+        const response = await api.get(`/api/admin/records?page=${page}`)
         if (response.status === 200 && response.data) {
           this.rates.data = response.data.data
           this.rates.links = response.data.meta.links
@@ -85,13 +69,13 @@ export default defineComponent({
 
     async addRate(){
       try {
-        const response = await api.post(`/api/admin/rates`,
-            { price : this.price, period: this.period }
+        const response = await api.post(`/api/admin/records`,
+            { volume : this.volume, period: this.period }
         )
         if (response.status === 200 || response.status === 201) {
-          await this.getRates()
+          await this.getRecords()
           this.errors.period = null
-          this.errors.price = null
+          this.errors.volume = null
           this.changeAddingRate()
         }
         // console.log(response);
@@ -118,19 +102,16 @@ export default defineComponent({
       <button v-if="addingRate" @click.prevent="changeAddingRate" class="btn btn-primary col-2">X</button>
     </div>
 
-<!--    Добавление новго тарифа-->
+<!--    Добавление новой записи-->
     <div v-if="addingRate">
-      <div class="form-label mt-2">Период</div>
-      <VueDatePicker clas="mt-2" v-model="month" month-picker auto-apply/>
+      <div class="form-label mt-2">Показания счётчика</div>
+      <input type="number" v-model="volume" class="form-control mt-2" step="0.01"  placeholder="Цена">
+      <div v-if="errors.volume" class="text-danger mt-2">{{ errors.volume[0] }}</div>
       <div v-if="errors.period" class="text-danger mt-2">{{ errors.period[0] }}</div>
-      <div v-if="!isValidPeriod" class="text-danger mt-2">Разрешено изменть цену на тариф только для будущих периодов</div>
-      <div class="form-label mt-2">Цена</div>
-      <input type="number" v-model="price" class="form-control mt-2" step="0.01"  placeholder="Цена">
-      <div v-if="errors.price" class="text-danger mt-2">{{ errors.price[0] }}</div>
       <input type="submit"
              @click.prevent="addRate"
-             :class="'form-control btn btn-primary mt-2 ' + (isValidPeriod ? '' : 'disabled')"
-             value="Изменить тариф">
+             class="form-control btn btn-primary mt-2"
+             value="Добавить показания">
     </div>
 
 <!--    Список тарифов-->
@@ -140,14 +121,14 @@ export default defineComponent({
         <tr>
           <th scope="col">Год</th>
           <th scope="col">Месяц</th>
-          <th scope="col">Тариф</th>
+          <th scope="col">Объём</th>
         </tr>
         </thead>
         <tbody>
         <tr v-for="item in rates.data" :key="item.id">
           <th>{{ item['year']}}</th>
           <td>{{ item['month'] }}</td>
-          <td>{{ item['price'] }}</td>
+          <td>{{ item['volume'] }}</td>
         </tr>
         </tbody>
       </table>
@@ -157,7 +138,7 @@ export default defineComponent({
               v-for="link in rates.links"
               :key="link.label"
               :class="'page-item ' + (link.active ? 'active ' : '') + (link.url ? '' : 'disabled')">
-            <a @click.prevent="getRates(link.page)"
+            <a @click.prevent="getRecords(link.page)"
                class="page-link" href="#"
                v-html="link.label"
             ></a>
