@@ -30,6 +30,14 @@ export const useUserStore = defineStore('user', {
     actions: {
         ...mapActions(useErrorStore,{ storeError: 'storeError' }),
 
+        resetUser(){
+            this.user.name = null
+            this.user.email = null
+            this.user.surname =null
+            this.user.role = null
+            this.user.patronymic = null
+            this.isAuth = false
+        },
         resetErrors(){
             this.errors.email = null
             this.errors.name = null
@@ -65,7 +73,7 @@ export const useUserStore = defineStore('user', {
         async logout() {
             try {
                 const response = await api.get('/api/user/logout')
-                if (response.status === 201 && response.data.data){
+                if (response.status === 200){
                     this.$reset();
                     router.push({name: 'login'})
                 }

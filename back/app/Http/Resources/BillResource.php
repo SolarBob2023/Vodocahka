@@ -19,6 +19,7 @@ class BillResource extends JsonResource
         $reqDt = Carbon::create(2022);
         $reqDt->addMonths($this->period_id - 1);
         return [
+            'id' => $this->id,
             'year' => $reqDt->year,
             'month' => $reqDt->monthName,
             'resident_id' => $this->whenLoaded('resident',new MissingValue(),$this->resident_id),

@@ -52,6 +52,11 @@ export default defineComponent({
               >Регистрация
               </RouterLink>
             </li>
+            <li class="nav-item">
+              <RouterLink v-if="userStore.isAuth && userStore.user.role === 2" class="nav-link" :to="{ name: 'bills' }"
+              >Счета
+              </RouterLink>
+            </li>
             <li class="nav-item" v-if="userStore.isAuth">
               <a class="nav-link" @click.prevent="userStore.logout()" href="#">Выйти</a>
             </li>

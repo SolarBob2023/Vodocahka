@@ -23,7 +23,12 @@ const router = createRouter({
       path: '/error',
       name: 'error',
       component: () => import('../views/ErrorView.vue')
-    }
+    },
+    {
+      path: '/bills',
+      name: 'bills',
+      component: () => import('../views/BillView.vue')
+    },
   ]
 })
 
