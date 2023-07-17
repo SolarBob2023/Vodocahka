@@ -18,6 +18,7 @@ class RateResource extends JsonResource
         $reqDt = Carbon::create(2022);
         $reqDt->addMonths($this->period_id - 1);
         return [
+            'id' => $this->id,
             'year' => $reqDt->year,
             'month' => $reqDt->monthName,
             'price' => $this->amount_price,
