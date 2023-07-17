@@ -56,7 +56,7 @@ class ResidentController extends Controller
             if ($maxBillPeriod >= $periodId) {
                 return response()
                     ->json([
-                        'errors' => ['period' => ['Нельзя добавить дачника в период, по которому уже выставлены счета']]
+                        'errors' => ['start_date' => ['Нельзя добавить дачника в период, по которому уже выставлены счета']]
                     ], 422);
             }
             $resident = Resident::create($data);
@@ -64,7 +64,7 @@ class ResidentController extends Controller
         } else {
             return response()
                 ->json([
-                    'errors' => ['period' => ['нельзя добавить дачника, у которого дата подключения раньше, чем последний расчётный период']]
+                    'errors' => ['start_date' => ['нельзя добавить дачника, у которого дата подключения раньше, чем последний расчётный период']]
                 ], 422);
         }
     }

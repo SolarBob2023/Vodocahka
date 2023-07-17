@@ -87,21 +87,21 @@ export default defineComponent({
 
 <template>
   <div class="row">
-    <div>Выставленные счета</div>
-    <VueDatePicker v-model="month" month-picker auto-apply/>
+    <div class="mt-2">Выставленные счета</div>
+    <VueDatePicker class="mt-2" v-model="month" month-picker auto-apply/>
     <a @click.prevent="getBills()"
-       :class="'btn btn-primary ' + (isValidPeriod ? '' : 'disabled')"
+       :class="'btn btn-primary mt-2 ' + (isValidPeriod ? '' : 'disabled')"
        href="#">
       Показать
     </a>
-    <div v-if="bills.data && bills.data.length===0">
+    <div v-if="bills.data && bills.data.length===0" class="mt-2">
       <p class="text-danger">За выбранный период не выставлены счета</p>
     </div>
-    <div v-if="!isValidPeriod">
+    <div v-if="!isValidPeriod" class="mt-2">
       <p class="text-danger">Период должен быть позднее января 2022 года и раньше
         {{format(addMonths(new Date(), 1), 'MMMM', {locale: ru})}} текущего года</p>
     </div>
-    <div v-if="bills.data && bills.data.length>0">
+    <div v-if="bills.data && bills.data.length>0" class="mt-2">
       <table class="table">
         <thead>
         <tr>

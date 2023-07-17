@@ -67,6 +67,11 @@ export default defineComponent({
               >Счётчик
               </RouterLink>
             </li>
+            <li class="nav-item">
+              <RouterLink v-if="userStore.isAuth && userStore.user.role === 2" class="nav-link" :to="{ name: 'residents' }"
+              >Дачники
+              </RouterLink>
+            </li>
             <li class="nav-item" v-if="userStore.isAuth">
               <a class="nav-link" @click.prevent="userStore.logout()" href="#">Выйти</a>
             </li>
