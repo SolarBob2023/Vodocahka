@@ -1,8 +1,7 @@
 <script>
-import { defineComponent } from 'vue'
-import api from '@/api'
-import { useUserStore } from '@/stores/User'
-import { mapStores } from 'pinia'
+import {defineComponent} from 'vue'
+import {useUserStore} from '@/stores/User'
+import {mapStores} from 'pinia'
 
 export default defineComponent({
   name: 'RegisterView',
@@ -11,52 +10,8 @@ export default defineComponent({
     ...mapStores(useUserStore)
   },
 
-  data() {
-    return {
-      user: {
-        name: null,
-        email: null,
-        surname: null,
-        password: null,
-        password_confirmation: null,
-        patronymic: null
-      },
-      errors: {
-        email: null,
-        name: null,
-        surname: null,
-        patronymic: null,
-        password: null,
-        password_confirmation: null
-      }
-    }
-  },
-
-  methods: {
-    storeUser() {
-      console.log(this.user)
-      api
-        .post('/api/user', this.user)
-        .then((response) => {
-          this.errors.email = null
-          this.errors.name = null
-          this.errors.surname = null
-          this.errors.patronymic = null
-          this.errors.password = null
-          this.errors.password_confirmation = null
-          this.userStore.store(response.data.data)
-          this.userStore.authUser()
-          this.$router.push({ name: 'home' })
-          console.log(response)
-        })
-        .catch((error) => {
-          // ошибка валидации
-          if (error.response.status === 422) {
-            this.errors = error.response.data.errors
-            // console.log(error.response.data.errors);
-          } else console.log(error)
-        })
-    }
+  unmounted() {
+    this.userStore.resetErrors()
   }
 })
 </script>
@@ -65,42 +20,42 @@ export default defineComponent({
   <div class="row">
     <div class="mb-3">
       <label class="form-label">Ваш email</label>
-      <input v-model="user.email" type="email" class="form-control" placeholder="user@maail.ru" />
-      <div v-if="errors.email" class="text-danger">{{ errors.email[0] }}</div>
+      <input v-model="userStore.user.email" type="email" class="form-control" placeholder="user@maail.ru" />
+      <div v-if="userStore.errors.email" class="text-danger">{{ userStore.errors.email[0] }}</div>
     </div>
     <div class="mb-3">
       <label class="form-label">Ваше имя</label>
-      <input v-model="user.name" type="text" class="form-control" placeholder="Иванов" />
-      <div v-if="errors.name" class="text-danger">{{ errors.name[0] }}</div>
+      <input v-model="userStore.user.name" type="text" class="form-control" placeholder="Иванов" />
+      <div v-if="userStore.errors.name" class="text-danger">{{ userStore.errors.name[0] }}</div>
     </div>
     <div class="mb-3">
       <label class="form-label">Ваша фамилия</label>
-      <input v-model="user.surname" type="text" class="form-control" placeholder="Иван" />
-      <div v-if="errors.surname" class="text-danger">{{ errors.surname[0] }}</div>
+      <input v-model="userStore.user.surname" type="text" class="form-control" placeholder="Иван" />
+      <div v-if="userStore.errors.surname" class="text-danger">{{ userStore.errors.surname[0] }}</div>
     </div>
     <div class="mb-3">
       <label class="form-label">Ваше отчетсво</label>
-      <input v-model="user.patronymic" type="text" class="form-control" placeholder="Иванович" />
-      <div v-if="errors.patronymic" class="text-danger">{{ errors.patronymic[0] }}</div>
+      <input v-model="userStore.user.patronymic" type="text" class="form-control" placeholder="Иванович" />
+      <div v-if="userStore.errors.patronymic" class="text-danger">{{ userStore.errors.patronymic[0] }}</div>
     </div>
     <div class="mb-3">
       <label class="form-label">Пароль</label>
-      <input v-model="user.password" type="password" class="form-control" placeholder="password" />
-      <div v-if="errors.password" class="text-danger">{{ errors.password[0] }}</div>
+      <input v-model="userStore.user.password" type="password" class="form-control" placeholder="password" />
+      <div v-if="userStore.errors.password" class="text-danger">{{ userStore.errors.password[0] }}</div>
     </div>
     <div class="mb-3">
       <label class="form-label">Повторите пароль</label>
       <input
-        v-model="user.password_confirmation"
+        v-model="userStore.user.password_confirmation"
         type="password"
         class="form-control"
         placeholder="password"
       />
-      <div v-if="errors.password_confirmation" class="text-danger">
-        {{ errors.password_confirmation[0] }}
+      <div v-if="userStore.errors.password_confirmation" class="text-danger">
+        {{ userStore.errors.password_confirmation[0] }}
       </div>
     </div>
-    <input type="submit" @click.prevent="storeUser" class="btn btn-primary" value="Регистрация" />
+    <input type="submit" @click.prevent="userStore.register" class="btn btn-primary" value="Регистрация" />
   </div>
 </template>
 

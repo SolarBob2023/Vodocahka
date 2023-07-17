@@ -20,7 +20,7 @@ class UserController extends BaseController
         unset($data['password_confirmation']);
         $data['role'] = 1;
         $user = User::create($data);
-        Auth::login($user, false);
+        Auth::login($user, 1);
         $user->createToken('user', ['user'])->plainTextToken;
         $request->session()->regenerate();
         return UserResource::make($user);
@@ -39,12 +39,18 @@ class UserController extends BaseController
         return response()->Json(["Вы вышлки из аккуанта"],200);
     }
 
+    public function show()
+    {
+        $user = auth()->user();
+        return UserResource::make($user);
+    }
+
     public function login(LoginRequest $request)
     {
         $data = $request->validated();
         $user = User::where('email', $data['email'])->first();
         if (Hash::check($data['password'], $user->password)){
-            Auth::login($user, false);
+            Auth::login($user, 1);
             $request->session()->regenerate();
             if ($user->role == 1) {
                 $user->createToken('user', ['user'])->plainTextToken;

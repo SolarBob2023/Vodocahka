@@ -36,7 +36,7 @@ class ResidentController extends Controller
         $periodId = Carbon::create(2022)->diffInMonths($reqDt) + 1;
         $diffMonths = $currentDt->diffInMonths($reqDt, false);
         if ($diffMonths >=0){
-            //TODO проверка что перид есть, и пользователь не подключен
+            //TODO транзакции в бд
             //Проверка на наличие предудщих периодов в бд
             $lastPeriod = Period::max('id');
             if ($lastPeriod - $periodId < 0){

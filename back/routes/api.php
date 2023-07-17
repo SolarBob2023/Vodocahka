@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix'=> 'user', 'middleware' => 'auth:sanctum'], function (){
     Route::get('/logout', [\App\Http\Controllers\UserController::class, 'logout']);
+    Route::get('/', [\App\Http\Controllers\UserController::class, 'show']);
 
 });
 
