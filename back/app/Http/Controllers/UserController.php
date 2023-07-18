@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends BaseController
@@ -19,9 +20,16 @@ class UserController extends BaseController
         $data['password'] = Hash::make($data['password']);
         unset($data['password_confirmation']);
         $data['role'] = 1;
-        $user = User::create($data);
+        DB::beginTransaction();
+        try {
+            $user = User::create($data);
+        } catch (\Exception $exception){
+            DB::rollback();
+            throw $exception;
+        }
+        DB::commit();
+
         Auth::login($user, 1);
-        $user->createToken('user', ['user'])->plainTextToken;
         $request->session()->regenerate();
         return UserResource::make($user);
     }
@@ -30,12 +38,7 @@ class UserController extends BaseController
     {
         auth()->guard('web')->logout();
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
-//        $user = auth()->user();
-//        if ($user->tokenCan('user')){
-//            return $user->tokens()->get();
-//        } else return 222;
         return response()->Json(["Вы вышлки из аккуанта"],200);
     }
 

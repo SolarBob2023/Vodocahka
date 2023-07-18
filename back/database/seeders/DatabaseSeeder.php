@@ -63,21 +63,6 @@ class DatabaseSeeder extends Seeder
             ]);
         }
         Resident::factory()->count(20)->create();
-//        $bills = DB::select('
-//                select periods.id as period_id, residents.id as resident_id,
-//                amount_volume * amount_price/_ploshad * residents.area as amount_rub
-//                    from public.pump_meter_records
-//                join public.periods on periods.id = pump_meter_records.period_id
-//                join public.residents on residents.start_date <= periods.end_date
-//                join public.rates on periods.id = rates.period_id
-//                join (SELECT periods.id as _period,  round(sum(area::numeric),2) as _ploshad
-//                        FROM public.residents
-//                            join public.periods on residents.start_date <= periods.end_date
-//                        group by periods.id
-//                        order by periods.id
-//                     ) as foo on _period = periods.id
-//            ');
-
         $periodPrices = DB::table('periods')
             ->select('periods.id', DB::raw('amount_volume * amount_price as price'))
             ->join('pump_meter_records', 'periods.id', '=', 'pump_meter_records.period_id')

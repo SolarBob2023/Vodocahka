@@ -8,6 +8,7 @@ use App\Models\Period;
 use App\Models\Resident;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ResidentController extends Controller
 {
@@ -20,9 +21,9 @@ class ResidentController extends Controller
         ]);
 
         //Проверка что указанного дачника нет в базе данных
-        $resident = Resident::where('fio','=', $data['fio'])
+        $resident = Resident::where('fio', '=', $data['fio'])
             ->where('area', $data['area'])->first();
-        if ($resident){
+        if ($resident) {
             return response()
                 ->json([
                     'errors' => ['message' => ['Дачник с таким участком уже подключен']]
@@ -35,21 +36,29 @@ class ResidentController extends Controller
         $reqDt = Carbon::create($startDt->year, $startDt->month);
         $periodId = Carbon::create(2022)->diffInMonths($reqDt) + 1;
         $diffMonths = $currentDt->diffInMonths($reqDt, false);
-        if ($diffMonths >=0){
-            //TODO транзакции в бд
+        if ($diffMonths >= 0) {
+
             //Проверка на наличие предудщих периодов в бд
-            $lastPeriod = Period::max('id');
-            if ($lastPeriod - $periodId < 0){
-                $lastDtBegin = Carbon::create(2022)->addMonths($lastPeriod);
-                for ($i = 0; $i < abs($lastPeriod - $periodId); $i++){
-                    Period::updateOrCreate([
-                        'begin_date' => $lastDtBegin,
-                        'end_date' => $lastDtBegin->copy()->addMonth()->subDay()
-                    ]);
-                    $lastDtBegin->addMonth();
+            DB::beginTransaction();
+            try {
+                $lastPeriod = Period::max('id');
+                if ($lastPeriod - $periodId < 0) {
+                    $lastDtBegin = Carbon::create(2022)->addMonths($lastPeriod);
+                    for ($i = 0; $i < abs($lastPeriod - $periodId); $i++) {
+                        Period::updateOrCreate([
+                            'begin_date' => $lastDtBegin,
+                            'end_date' => $lastDtBegin->copy()->addMonth()->subDay()
+                        ]);
+                        $lastDtBegin->addMonth();
+                    }
                 }
+                $resident = Resident::create($data);
+            } catch (\Exception $exception) {
+                DB::rollback();
+                throw $exception;
             }
-            $resident = Resident::create($data);
+            DB::commit();
+
             return ResidentResource::make($resident);
         } elseif ($diffMonths == -1) {
             $maxBillPeriod = Bill::max('period_id');
@@ -59,7 +68,15 @@ class ResidentController extends Controller
                         'errors' => ['start_date' => ['Нельзя добавить дачника в период, по которому уже выставлены счета']]
                     ], 422);
             }
-            $resident = Resident::create($data);
+            DB::beginTransaction();
+            try {
+                $resident = Resident::create($data);
+            } catch (\Exception $exception) {
+                DB::rollback();
+                throw $exception;
+            }
+            DB::commit();
+
             return ResidentResource::make($resident);
         } else {
             return response()
@@ -78,7 +95,7 @@ class ResidentController extends Controller
         return ResidentResource::make($resident);
     }
 
-    public function index() : \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    public function index(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         $residents = Resident::orderBy('id', 'DESC')->paginate(10);
         return ResidentResource::collection($residents);
