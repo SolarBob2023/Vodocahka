@@ -7,7 +7,7 @@
 <ol>
     <li>открыть в консоли папку с проектом</li>
     <li>выполнить команду: chmod 777 -R back/</li>
-    <li>выполнить команду: docker composer up -d</li>
+    <li>выполнить команду: docker compose up -d</li>
     <li>выполнить команду: docker exec -it php bash</li>
     <li>выполнить команду: php artisan migrate:fresh --seed</li>
 </ol>
