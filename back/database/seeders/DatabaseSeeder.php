@@ -8,6 +8,7 @@ use App\Models\Resident;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,12 +17,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+         \App\Models\User::factory()->create([
+             'name' => 'Admin',
+             'surname' =>  fake()->lastName(),
+             'patronymic' =>  fake()->lastName(),
+             'email' => 'admin@mail.ru',
+             'password' => Hash::make('12345678'),
+             'role' => 2
+         ]);
+        \App\Models\User::factory()->create([
+            'name' => 'User',
+            'surname' =>  fake()->lastName(),
+            'patronymic' =>  fake()->lastName(),
+            'email' => 'user@mail.ru',
+            'role' => 1,
+            'password' => Hash::make('12345678'),
+        ]);
 
         //Заполение таблицы периодов c прошлого года
         $currentDt = Carbon::now();

@@ -36,6 +36,8 @@ services:
     volumes:
       - ./:/var/www
       - /var/www/vendor
+    depends_on:
+      - db
     container_name: php
 
   nginx:

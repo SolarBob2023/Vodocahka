@@ -13,6 +13,6 @@ class Authenticate extends Middleware
      */
     protected function redirectTo(Request $request): ?string
     {
-        return $request->expectsJson() ? null : throw new UnauthorizedHttpException('Basic');
+        return $request->expectsJson() ? null : throw new UnauthorizedHttpException('Basic','Вы не авторизированы');
     }
 }

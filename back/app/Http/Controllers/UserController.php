@@ -52,12 +52,6 @@ class UserController extends BaseController
         if (Hash::check($data['password'], $user->password)){
             Auth::login($user, 1);
             $request->session()->regenerate();
-            if ($user->role == 1) {
-                $user->createToken('user', ['user'])->plainTextToken;
-            }
-            if ($user->role == 2) {
-                $user->createToken('admin', ['admin'])->plainTextToken;
-            }
             return UserResource::make($user);
         } else {
             return response()->json(['errors'=> ['password' => ['Неверный пароль']]], 422);

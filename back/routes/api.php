@@ -26,7 +26,7 @@ Route::group(['prefix'=> 'user'], function (){
     Route::post('/login', [\App\Http\Controllers\UserController::class, 'login']);
 });
 
-Route::group(['prefix'=> 'admin', 'middleware' => 'auth:sanctum'], function (){
+Route::group(['prefix'=> 'admin', 'middleware' => ['auth:sanctum','admin']], function (){
     Route::post('/rates', [\App\Http\Controllers\RateController::class, 'store']);
     Route::get('/rates', [\App\Http\Controllers\RateController::class, 'index']);
     Route::post('/records', [\App\Http\Controllers\RecordController::class, 'store']);

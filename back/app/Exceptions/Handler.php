@@ -43,7 +43,7 @@ class Handler extends ExceptionHandler
         $this->renderable(function (UnauthorizedHttpException $e, Request $request) {
             if ($request->is('api/*')) {
                 return response()->json([
-                    'errors' => 'Вы не авторизованы'
+                    'errors' => $e->getMessage()
                 ], $e->getStatusCode());
             }
         });

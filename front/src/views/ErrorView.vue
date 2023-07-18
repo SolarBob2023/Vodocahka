@@ -1,8 +1,7 @@
 <script>
 import {defineComponent} from 'vue'
-import {mapActions, mapStores} from 'pinia'
+import {mapStores} from 'pinia'
 import {useErrorStore} from "@/stores/Error";
-import {useUserStore} from "@/stores/User";
 
 export default defineComponent({
   name: 'ErrorView',
@@ -17,7 +16,6 @@ export default defineComponent({
   },
 
   methods: {
-    ...mapActions(useUserStore,{ resetUser: 'resetUser' }),
   },
   mounted() {
     const error = this.errorStore.getError;
@@ -25,9 +23,6 @@ export default defineComponent({
     if (error)  {
       if (error.response && error.response.data) {
         //Не авторизован
-        if (error.response.status === 401){
-          this.resetUser()
-        }
         this.message = error.response.data.errors
         this.status = error.response.status
         // console.log(error.response.data);

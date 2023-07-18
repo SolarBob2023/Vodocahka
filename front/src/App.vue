@@ -12,12 +12,10 @@ export default defineComponent({
 
   },
   methods: {
-    async test(){
-      this.userStore.getUser()
-    },
+
   },
   beforeMount() {
-    this.test();
+    this.userStore.getUser()
   },
 
 })

@@ -2,6 +2,8 @@
 
 namespace Tests\Unit;
 
+use App\Models\User;
+use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\TestCase;
 
 class ExampleTest extends TestCase
@@ -13,4 +15,5 @@ class ExampleTest extends TestCase
     {
         $this->assertTrue(true);
     }
+
 }

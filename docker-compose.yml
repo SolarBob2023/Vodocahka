@@ -31,9 +31,12 @@ services:
     build:
       context: ./back/
       dockerfile:  ./_docker/php/Dockerfile
+    depends_on:
+      - db
     volumes:
       - ./back/:/var/www
       - /var/www/vendor
+    
     container_name: php
 
   nginx:
