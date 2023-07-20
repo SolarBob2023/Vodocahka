@@ -9,6 +9,6 @@ const api = axios.create({
 })
 
 api.defaults.withCredentials = true
-api.defaults.baseURL = 'http://localhost'
+api.defaults.baseURL = 'http://localhost:80'
 
 export default api
