@@ -2,7 +2,7 @@
 <p>pgadmin http://localhost:8020/</p>
 <p>VueDev http://localhost:5173/</p>
 <p>Postgres localhost:5432</p>
-
+<p>адрес в сети https://vodokachka.solarbob.ru/</p>
 
 <p>Укажите в файле .env желаемый порт для nginx по умолчанию "80"</p>
 <p>Инструкция:</p>
